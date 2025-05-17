@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.transition.Visibility
+import kotlin.time.Duration
 
 private const val TAG = "MainActivity"
 
@@ -18,15 +19,16 @@ class MainActivity : AppCompatActivity() {
     private lateinit var nextButton: Button
     private lateinit var prevButton: Button
     private lateinit var questionTextView: TextView
-
     private val questionBank = listOf(
-        Question(R.string.question_australia, true),
-        Question(R.string.question_oceans, true),
-        Question(R.string.question_mideast, false),
-        Question(R.string.question_africa, false),
-        Question(R.string.question_americas, true),
-        Question(R.string.question_asia, true))
+        Question(R.string.question_australia, true,false),
+        Question(R.string.question_oceans, true,false),
+        Question(R.string.question_mideast, false,false),
+        Question(R.string.question_africa, false,false),
+        Question(R.string.question_americas, true,false),
+        Question(R.string.question_asia, true,false))
     private var currentIndex = 0
+    private var corAnswCount = 0
+    private var answCount = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -59,33 +61,53 @@ class MainActivity : AppCompatActivity() {
     private fun updateQuestion() {
         val questionTextResId = questionBank[currentIndex].textResId
         questionTextView.setText(questionTextResId)
-        if (currentIndex == 5) nextButton.visibility = View.GONE
-        else nextButton.visibility = View.VISIBLE
-        if (currentIndex == 0) prevButton.visibility = View.GONE
-        else prevButton.visibility = View.VISIBLE
-        trueButton.visibility = View.VISIBLE
-        falseButton.visibility = View.VISIBLE
+        if (currentIndex == questionBank.size - 1)
+            nextButton.visibility = View.GONE
+        else
+            nextButton.visibility = View.VISIBLE
+        if (currentIndex == 0)
+            prevButton.visibility = View.GONE
+        else
+            prevButton.visibility = View.VISIBLE
+
+        if(questionBank[currentIndex].isAnswered == false) {
+            trueButton.visibility = View.VISIBLE
+            falseButton.visibility = View.VISIBLE
+        }
+        else{
+            trueButton.visibility = View.GONE
+            falseButton.visibility = View.GONE
+        }
     }
     private fun checkAnswer(userAnswer: Boolean) {
         val correctAnswer = questionBank[currentIndex].answer
-        val messageResId = if (userAnswer == correctAnswer) {
-            R.string.correct_toast
+        val messageResId: Int
+        if (userAnswer == correctAnswer) {
+            messageResId = R.string.correct_toast
+            corAnswCount++
         } else {
-            R.string.incorrect_toast
+            messageResId = R.string.incorrect_toast
         }
+        questionBank[currentIndex].isAnswered = true
+        answCount++
+
         Toast.makeText(this, messageResId,Toast.LENGTH_SHORT).show()
+
         trueButton.visibility = View.GONE
         falseButton.visibility = View.GONE
+
+        if(answCount == questionBank.size)
+            questionTextView.setText("Количество правильных ответов:$corAnswCount")
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putInt("indexkey", currentIndex)
     }
-//    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-//        super.onRestoreInstanceState(savedInstanceState)
-//        currentIndex = savedInstanceState.getInt("indexkey")
-//        updateQuestion()
-//        Log.d("TestInstance","Restore Index:$currentIndex")
-//    }
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        currentIndex = savedInstanceState.getInt("indexkey")
+        updateQuestion()
+        Log.d("TestInstance","Restore Index:$currentIndex")
+    }
 }
