@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.transition.Visibility
 
 private const val TAG = "MainActivity"
+
 class MainActivity : AppCompatActivity() {
     private lateinit var trueButton : Button
     private lateinit var falseButton : Button
@@ -58,6 +59,10 @@ class MainActivity : AppCompatActivity() {
     private fun updateQuestion() {
         val questionTextResId = questionBank[currentIndex].textResId
         questionTextView.setText(questionTextResId)
+        if (currentIndex == 5) nextButton.visibility = View.GONE
+        else nextButton.visibility = View.VISIBLE
+        if (currentIndex == 0) prevButton.visibility = View.GONE
+        else prevButton.visibility = View.VISIBLE
         trueButton.visibility = View.VISIBLE
         falseButton.visibility = View.VISIBLE
     }
