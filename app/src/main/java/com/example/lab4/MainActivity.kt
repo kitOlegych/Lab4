@@ -8,9 +8,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import kotlin.math.abs
 
 private const val TAG = "MainActivity"
 class MainActivity : AppCompatActivity() {
@@ -30,9 +27,9 @@ class MainActivity : AppCompatActivity() {
     private var currentIndex = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d(TAG, "onCreate(Bundle?) called")
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
+
         trueButton = findViewById(R.id.true_button)
         falseButton = findViewById(R.id.false_button)
         nextButton = findViewById(R.id.next_button)
@@ -53,8 +50,9 @@ class MainActivity : AppCompatActivity() {
             currentIndex = (currentIndex - 1).mod(questionBank.size)
             updateQuestion()
         }
+        currentIndex = savedInstanceState?.getInt("indexkey", 0) ?: 0
+        Log.d("TestInstance","FirstUpdateQuestion:$currentIndex")
         updateQuestion()
-
     }
     private fun updateQuestion() {
         val questionTextResId = questionBank[currentIndex].textResId
@@ -70,5 +68,14 @@ class MainActivity : AppCompatActivity() {
         Toast.makeText(this, messageResId,Toast.LENGTH_SHORT).show()
     }
 
-
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt("indexkey", currentIndex)
+    }
+//    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+//        super.onRestoreInstanceState(savedInstanceState)
+//        currentIndex = savedInstanceState.getInt("indexkey")
+//        updateQuestion()
+//        Log.d("TestInstance","Restore Index:$currentIndex")
+//    }
 }
