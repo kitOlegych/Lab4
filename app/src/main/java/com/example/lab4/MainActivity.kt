@@ -8,6 +8,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.transition.Visibility
 
 private const val TAG = "MainActivity"
 class MainActivity : AppCompatActivity() {
@@ -57,6 +58,8 @@ class MainActivity : AppCompatActivity() {
     private fun updateQuestion() {
         val questionTextResId = questionBank[currentIndex].textResId
         questionTextView.setText(questionTextResId)
+        trueButton.visibility = View.VISIBLE
+        falseButton.visibility = View.VISIBLE
     }
     private fun checkAnswer(userAnswer: Boolean) {
         val correctAnswer = questionBank[currentIndex].answer
@@ -66,6 +69,8 @@ class MainActivity : AppCompatActivity() {
             R.string.incorrect_toast
         }
         Toast.makeText(this, messageResId,Toast.LENGTH_SHORT).show()
+        trueButton.visibility = View.GONE
+        falseButton.visibility = View.GONE
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
