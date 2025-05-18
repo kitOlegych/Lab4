@@ -26,6 +26,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var prevButton: Button
     private lateinit var questionTextView: TextView
     private lateinit var cheatButton: Button
+    private var cheatsUsed = 0
 
     private val quizViewModel: QuizViewModel by
     lazy {
@@ -71,6 +72,7 @@ class MainActivity : AppCompatActivity() {
     private fun updateQuestion() {
         val questionTextResId = quizViewModel.currentQuestionText
         questionTextView.setText(questionTextResId)
+        if(cheatsUsed>=3) cheatButton.visibility = View.GONE
     }
     private fun checkAnswer(userAnswer: Boolean) {
         val correctAnswer = quizViewModel.currentQuestionAnswer
@@ -92,9 +94,8 @@ class MainActivity : AppCompatActivity() {
         }
         if (requestCode == REQUEST_CODE_CHEAT)
         {
-            quizViewModel.isCheater = data?.getBooleanExtra(
-                EXTRA_ANSWER_SHOWN,
-                false) ?: false
+            if(data?.getBooleanExtra(EXTRA_ANSWER_SHOWN, false) ?: false)
+                cheatsUsed++
         }
     }
 
